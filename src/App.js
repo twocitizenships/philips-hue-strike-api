@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Button, CircularProgress, Popover } from '@mui/material';
+import QRCode from "qrcode.react";
+import { Button, CircularProgress, Box, Typography, Popover } from '@mui/material';
 import { Invoice } from './components'
-import { discoverAndCreateUser } from './lib/connectToBridge'
+
+import { huejay } from 'huejay'
 import { api, INVOICE_STATE_UNPAID, INVOICE_STATE_PAID } from './lib/api.js'
 
-const PARTNER_API_URL = "https://api.next.strike.me/v1/";
+const HUE_USERNAME = "YrbTsKDCQakNnPOhWUENzHBHQXP9OR9zwutt9ydW";
+const PARTNER_API_URL = "https://api.next.strike.me/v1";
 const THEME_DEFAULT = 'default';
 const THEME_NONE = 'none';
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
 
 const getDefaultCurrency = profile => {
   return profile.currencies.find(c => c.isDefaultCurrency).currency;
@@ -24,6 +31,22 @@ const getInvoice = async invoiceId => {
   return await api.getInvoice(invoiceId);
 };
 
+const connectToHue = () => new huejay.Client({
+  host: "192.168.1.105",
+  username: HUE_USERNAME
+});
+
+const changeLightHue = async (color) =>
+  await client.lights.getAll().then((lights) => {
+    // List valid lights
+    for (let light of lights) {
+      console.log(`Light [${light.id}]: ${light.name}`);
+      console.log(`    Hue:        ${light.hue}`);
+      // Change color of first one
+      light[0].hue = color;
+    }
+  });
+
 // Initialize the app
 export default function App({ apikey, handle, amount = 1, theme = THEME_DEFAULT }) {
   api.init(PARTNER_API_URL, apikey);
@@ -40,10 +63,13 @@ export default function App({ apikey, handle, amount = 1, theme = THEME_DEFAULT 
     setAnchorEl(null);
   };
 
+  //Connect to Hue
+  connectToHue()
+
   //
   // Button click handler
   //
-  const handleButtonClick = async (event, amount) => {
+  const hanldeButtonClick = async (event, amount) => {
     setAnchorEl(event.currentTarget);
     setIsFetchingInvoice(true);
 
@@ -60,7 +86,7 @@ export default function App({ apikey, handle, amount = 1, theme = THEME_DEFAULT 
   };
 
   //
-  // Widget Initialiation
+  // Widget Initialization
   //
   useEffect(async () => {
     var profile = await api.getProfile(handle)
@@ -84,6 +110,8 @@ export default function App({ apikey, handle, amount = 1, theme = THEME_DEFAULT 
       if (updatedInvoice.state !== INVOICE_STATE_UNPAID) {
         setQuote(null);
         successTimeoutId = setTimeout(() => { setInvoice(null); }, 3000);
+        //Change Hue color to random color
+        changeLightHue(getRandomInt(65535))
       }
 
       if (new Date(quote.expiration) < new Date()) {
@@ -104,13 +132,9 @@ export default function App({ apikey, handle, amount = 1, theme = THEME_DEFAULT 
     return null
   };
 
-  // Initialize Philips Hue Bridge connection
-  //discoverAndCreateUser()
-  // 
-
   return (
     <div>
-      <Button variant="contained" onClick={e => handleButtonClick(e, amount)} fullWidth>
+      <Button variant="contained" onClick={e => hanldeButtonClick(e, amount)} fullWidth>
         {isFetchingInvoice && <CircularProgress size={24} />}
         {isPaid ? "Thank You!" : `Tip ${handle} ${amount} ${getDefaultCurrency(profile)}`}
       </Button>

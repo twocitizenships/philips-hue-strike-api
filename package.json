@@ -1,7 +1,7 @@
 {
-  "name": "lightning-electric",
+  "name": "strike-tipping-widget",
   "version": "1.0.0",
-  "description": "Philips Hue API controlled by Lightning payments",
+  "description": "Strike tipping widget",
   "main": "src/index",
   "scripts": {
     "build": "react-scripts build",
@@ -24,10 +24,9 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.2.7",
-    "https-browserify": "^1.0.0",
+    "huejay": "^1.9.0",
     "ky": "^0.28.7",
     "ky-universal": "^0.9.1",
-    "node-hue-api": "^5.0.0-beta.13",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
