@@ -1,4 +1,8 @@
-# Strike Tipping Widget
+# philips-hue-strike-api
+
+Pay a lightning invoice and change the color of your Philips Hue lightstrip, lightbulb, etc.
+
+### Strike Tipping Widget
 
 > Simple proof of concept that demonstrates how a no-code Strike tipping widget could be built.
 
@@ -75,18 +79,3 @@ The code is essentially a very basic react app which you can start like so:
 ```sh
 npm start
 ```
-
-This will start a local server on port 3000 which will run the app in development mode. Changes made to files in the `src` directory will be reflected in the browser in realtime.
-
-
-## Suggested Improvements
-
-- Where to start?!...
-- Make it look better
-- Add support for themeing
-- Reduce the final javascript bundle size
-- Add more configuration options
-- Add support for Strike sandbox environments
-- Provide a hosted version
-- Wrap it up in a wordpress plugin
-- ...etc
